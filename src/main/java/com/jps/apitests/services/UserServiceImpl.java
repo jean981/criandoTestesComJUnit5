@@ -6,6 +6,7 @@ import com.jps.apitests.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,5 +21,9 @@ public class UserServiceImpl implements UserService {
         Optional<UUser> user = userRepository.findById(id);
         return  user.orElseThrow(() -> new ObjectNotFoundException("User not found"));
 
+    }
+
+    public List<UUser> findAll(){
+        return userRepository.findAll();
     }
 }
