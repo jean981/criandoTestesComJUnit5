@@ -1,6 +1,7 @@
 package com.jps.apitests.services;
 
 import com.jps.apitests.domain.UUser;
+import com.jps.apitests.exceptions.DataIntegratyViolationException;
 import com.jps.apitests.exceptions.ObjectNotFoundException;
 import com.jps.apitests.repositories.UserRepository;
 import com.jps.apitests.web.dto.UserDTO;
@@ -34,6 +35,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public UUser create(UserDTO userDTO) {
 
+        findByEmail(userDTO);
         return userRepository.save(modelMapper.map(userDTO, UUser.class));
+    }
+
+    private void findByEmail(UserDTO userDTO) {
+
+        Optional<UUser> user = userRepository.findByEmail(userDTO.getEmail());
+        if(user.isPresent()) {
+            throw new DataIntegratyViolationException("Email already exists");
+        }
     }
 }
