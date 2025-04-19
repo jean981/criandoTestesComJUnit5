@@ -1,6 +1,7 @@
 package com.jps.apitests.services;
 
 import com.jps.apitests.domain.UUser;
+import com.jps.apitests.exceptions.ObjectNotFoundException;
 import com.jps.apitests.repositories.UserRepository;
 import com.jps.apitests.web.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
@@ -49,7 +51,7 @@ class UserServiceImpUT {
     @Test
     void whenfindByIdThenReturnAnyUserInstance() {
 
-        when(userRepository.findById(Mockito.anyInt())).thenReturn(optionalUser);
+        when(userRepository.findById(anyInt())).thenReturn(optionalUser);
 
         UUser response = userService.findById(ID);
 
@@ -58,6 +60,19 @@ class UserServiceImpUT {
         assertEquals(ID, response.getId());
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
+    }
+
+    @Test
+    void whenfindByIdThenReturnObjectNotFoundException() {
+
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException("User not found"));
+
+        try {
+            userService.findById(ID);
+        }catch (Exception e){
+            assertEquals(ObjectNotFoundException.class, e.getClass());
+            assertEquals("User not found", e.getMessage());
+        }
     }
 
     @Test
