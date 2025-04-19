@@ -8,16 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest
 class UserServiceImpUT {
@@ -41,12 +39,10 @@ class UserServiceImpUT {
     private UserDTO userDTO;
 
     private Optional<UUser> optionalUser;
-    @Autowired
-    private ResourcePatternResolver resourcePatternResolver;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         startUsers();
     }
 
