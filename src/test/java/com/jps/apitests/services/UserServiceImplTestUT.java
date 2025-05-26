@@ -6,26 +6,31 @@ import com.jps.apitests.repositories.UserRepository;
 import com.jps.apitests.web.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.openMocks;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceImpUT {
 
-    public static final int ID = 1;
+    public static final Integer ID = 1;
     public static final String NAME = "Joao da Silva";
     public static final String EMAIL = "joao@gmail.com";
     public static final String PASSWORD = "senha123";
+    public static final String USER_NOT_FOUND = "User not found";
+    public static final int INDEX = 0;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -44,7 +49,6 @@ class UserServiceImpUT {
 
     @BeforeEach
     void setUp() {
-        openMocks(this);
         startUsers();
     }
 
@@ -65,18 +69,29 @@ class UserServiceImpUT {
     @Test
     void whenfindByIdThenReturnObjectNotFoundException() {
 
-        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException("User not found"));
+        when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException(USER_NOT_FOUND));
 
         try {
             userService.findById(ID);
         }catch (Exception e){
             assertEquals(ObjectNotFoundException.class, e.getClass());
-            assertEquals("User not found", e.getMessage());
+            assertEquals(USER_NOT_FOUND, e.getMessage());
         }
     }
 
     @Test
-    void findAll() {
+    void whenFindAllThenReturnUserList() {
+
+        when(userRepository.findAll()).thenReturn(List.of(user));
+
+        List<UUser> response = userService.findAll();
+
+        assertNotNull(response);
+        assertEquals(1, response.size());
+        assertEquals(UUser.class, response.get(INDEX).getClass());
+        assertEquals(ID, response.get(INDEX).getId());
+        assertEquals(NAME, response.get(INDEX).getName());
+        assertEquals(EMAIL, response.get(INDEX).getEmail());
     }
 
     @Test
@@ -94,6 +109,6 @@ class UserServiceImpUT {
     private void startUsers(){
         user = new UUser(ID, NAME, EMAIL, PASSWORD);
         userDTO = new UserDTO(ID, NAME, EMAIL, PASSWORD);
-        optionalUser = optionalUser.of(new UUser(ID, NAME, EMAIL, PASSWORD));
+        optionalUser = Optional.of(new UUser(ID, NAME, EMAIL, PASSWORD));
     }
 }
