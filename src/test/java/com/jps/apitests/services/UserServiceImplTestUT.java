@@ -1,6 +1,7 @@
 package com.jps.apitests.services;
 
 import com.jps.apitests.domain.UUser;
+import com.jps.apitests.exceptions.DataIntegratyViolationException;
 import com.jps.apitests.exceptions.ObjectNotFoundException;
 import com.jps.apitests.repositories.UserRepository;
 import com.jps.apitests.web.dto.UserDTO;
@@ -16,8 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -104,9 +104,21 @@ class UserServiceImpUT {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
 
+    }
 
+    @Test
+    void whenCreateUserThenReturnUserAlreadyExistException() {
 
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser);
 
+        try {
+            optionalUser.get().setId(2);
+            userService.create(userDTO);
+
+        }catch (Exception ex){
+            assertEquals(DataIntegratyViolationException.class, ex.getClass());
+            assertEquals("Email already exists", ex.getMessage());
+        }
     }
 
     @Test
