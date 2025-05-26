@@ -104,6 +104,18 @@ class UserServiceImpUT {
         assertEquals(NAME, response.getName());
         assertEquals(EMAIL, response.getEmail());
 
+    }    @Test
+    void whenUpdateUserThenSuccess() {
+
+        when(userRepository.save(any())).thenReturn(user);
+        UUser response = userService.update(userDTO);
+
+        assertNotNull(response);
+        assertEquals(UUser.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+
     }
 
     @Test
