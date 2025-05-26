@@ -11,16 +11,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImpUT {
@@ -95,7 +93,20 @@ class UserServiceImpUT {
     }
 
     @Test
-    void create() {
+    void whenCreateUserThenSuccess() {
+
+        when(userRepository.save(any())).thenReturn(user);
+        UUser response = userService.create(userDTO);
+
+        assertNotNull(response);
+        assertEquals(UUser.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+
+
+
+
     }
 
     @Test
