@@ -29,6 +29,7 @@ class UserServiceImpUT {
     public static final String PASSWORD = "senha123";
     public static final String USER_NOT_FOUND = "User not found";
     public static final int INDEX = 0;
+    public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -129,9 +130,24 @@ class UserServiceImpUT {
 
         }catch (Exception ex){
             assertEquals(DataIntegratyViolationException.class, ex.getClass());
-            assertEquals("Email already exists", ex.getMessage());
+            assertEquals(EMAIL_ALREADY_EXISTS, ex.getMessage());
         }
     }
+
+    @Test
+    void whenUpdateUserThenReturnUserAlreadyExistException() {
+
+        when(userRepository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try {
+            optionalUser.get().setId(2);
+            userService.update(userDTO);
+
+        } catch (Exception ex) {
+            assertEquals(DataIntegratyViolationException.class, ex.getClass());
+            assertEquals(EMAIL_ALREADY_EXISTS, ex.getMessage());
+        }
+    };
 
     @Test
     void update() {
